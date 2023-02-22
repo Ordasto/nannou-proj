@@ -1,7 +1,6 @@
 extern crate nannou;
+
 use nannou::prelude::*;
-
-
 
 fn main() {
     let width = 1200;
@@ -18,7 +17,31 @@ struct Model {
 }
 
 struct Particle {
+    radius:f32,
+    pos_x:f32,
+    pos_y:f32,
+    vel_x:f32,
+    vel_y:f32,
 }
+
+impl Particle {
+    // note sure i need update tbh
+    fn draw(self: &Self, app: &App){
+        let draw = app.draw();
+        let points = (0..360).map(|i| {
+            let radian = deg_to_rad(i as f32);
+            let x = radian.sin() * self.radius;
+            let y = radian.cos() * self.radius; 
+            return (pt2(x+self.pos_x,y+self.pos_y), STEELBLUE); 
+        });
+
+        draw.polygon()
+            .points_colored(points);
+        
+    }
+    
+}
+
 
 fn model(app: &App) -> Model {
     // Init stuff, gui etc...
@@ -36,31 +59,9 @@ fn view(app: &App, _model: &Model, frame: Frame) {
 
     // let rect2:Rect<f32> = Rect::from_w_h(50.0,50.0);
     // let mouse_pos = app.mouse.position();
-
-    let radius = 100.0;
-    // let mod2 = random_range(0.9, 1.1);
-    let mod2 = app.time.sin();
-    // println!(mod2)
-    let points = (0..360).map(|i| {
-        // let modifier = random_range(0.9, 1.1);
-        let modifier = mod2;
-        let radian = deg_to_rad(i as f32);
-        let x = radian.sin() * radius;
-        let y = radian.cos() * radius;
-        
-        // let lerped = pt2(
-        //     // x.lerp(x*modifier, ),
-        //     // y.lerp(x*modifier,),
-        // )
-        // return (lerped, STEELBLUE)
-        return (pt2(x*modifier,y*modifier), STEELBLUE); 
-    });
-
-
-    draw.polygon()
-        .points_colored(points);
-
+    let p = Particle{radius:10.0, pos_x:100.0, pos_y:100.0, vel_x:0.0, vel_y: 0.0};
     // Draw frame
+    p.draw(app);
     draw.to_frame(app, &frame).unwrap();
 }
 
